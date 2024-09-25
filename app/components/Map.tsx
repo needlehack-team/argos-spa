@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const Map: React.FC = () => {
-    const [markerPosition, setMarkerPosition] = useState<L.LatLngExpression | null>(null);
+    const [markersPosition, setMarkersPosition] = useState<L.LatLngExpression[]>([]);
     const apiToken = process.env.NEXT_PUBLIC_API_TOKEN; // Extract the token from the environment variable
 
     useEffect(() => {
@@ -31,9 +31,9 @@ const Map: React.FC = () => {
                 // Assuming the response contains an object with "data" array
                 const data = response.data.data;
                 if (data.length > 0) {
-                    // Extract and parse the first object's incidence_coordinates
-                    // const coordinates = JSON.parse(data[0].incidence_coordinates);
-                    setMarkerPosition([data[0].latitude, data[0].longitude]); // Assuming the coordinates are in [lat, lon] format
+                    // Assuming the coordinates are in [lat, lon] format
+                    const positions = data.map((incidence: any) => [incidence.latitude, incidence.longitude]);
+                    setMarkersPosition(positions); // Store all positions
                 }
             })
             .catch(error => {
@@ -54,13 +54,13 @@ const Map: React.FC = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {markerPosition && (
-                <Marker position={markerPosition}>
+            {markersPosition.map((position, index) => (
+                <Marker key={index} position={position}>
                     <Popup>
-                        Incidence Location
+                        Incidence Location #{index + 1}
                     </Popup>
                 </Marker>
-            )}
+            ))}
             <Polygon
                 positions={polygonCoords}
                 pathOptions={{ color: 'red', weight: 2, dashArray: '4' }} // Red border with dashed lines
