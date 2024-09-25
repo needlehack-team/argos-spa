@@ -25,15 +25,15 @@ const Map: React.FC = () => {
         }
 
         // Fetch data from the API
-        const apiUrl = `https://api.eu-central-1.aws.tinybird.co/v0/pipes/untitled_pipe_2106.json?incidence_id=8d1e1533-6071-4b10-9cda-b8429c1c7a68&token=${apiToken}`;
+        const apiUrl = `https://api.eu-central-1.aws.tinybird.co/v0/pipes/all_incidences.json?page_size=100&token=${apiToken}`;
         axios.get(apiUrl)
             .then(response => {
                 // Assuming the response contains an object with "data" array
                 const data = response.data.data;
                 if (data.length > 0) {
                     // Extract and parse the first object's incidence_coordinates
-                    const coordinates = JSON.parse(data[0].incidence_coordinates);
-                    setMarkerPosition([coordinates[0], coordinates[1]]); // Assuming the coordinates are in [lat, lon] format
+                    // const coordinates = JSON.parse(data[0].incidence_coordinates);
+                    setMarkerPosition([data[0].latitude, data[0].longitude]); // Assuming the coordinates are in [lat, lon] format
                 }
             })
             .catch(error => {
